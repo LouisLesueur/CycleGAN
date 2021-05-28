@@ -122,7 +122,7 @@ def save_checkpoint(model, optimizer, filename="my_checkpoint.pth.tar"):
 
 def load_checkpoint(checkpoint_file, model, optimizer, lr):
     print("=> Loading checkpoint")
-    checkpoint = torch.load(checkpoint_file, map_location=config.DEVICE)
+    checkpoint = torch.load(checkpoint_file, map_location=DEVICE)
     model.load_state_dict(checkpoint["state_dict"])
     optimizer.load_state_dict(checkpoint["optimizer"])
 
@@ -141,7 +141,7 @@ def train(D1, D2, G1, G2, loader, optD, optG, l1, mse, scalerD, scalerG):
 
         with torch.cuda.amp.autocast():
             
-            fake1 = G1(im1)
+            fake1 = G1(im2)
             D1_real = D1(im1)
             D1_fake = D1(fake1.detach())
             real1 += D1_real.mean().item()
@@ -150,7 +150,7 @@ def train(D1, D2, G1, G2, loader, optD, optG, l1, mse, scalerD, scalerG):
             D1_fake_loss = mse(D1_fake, torch.zeros_like(D1_fake))
             D1_loss = D1_real_loss + D1_fake_loss
 
-            fake2 = G2(im2)
+            fake2 = G2(im1)
             D2_real = D2(im2)
             D2_fake = D2(fake2.detach())
             D2_real_loss = mse(D2_real, torch.ones_like(D2_real))
@@ -172,8 +172,8 @@ def train(D1, D2, G1, G2, loader, optD, optG, l1, mse, scalerD, scalerG):
             loss_G1 = mse(D1_fake, torch.ones_like(D1_fake))
             loss_G2 = mse(D2_fake, torch.ones_like(D2_fake))
 
-            cycle1 = G1(im2)
-            cycle2 = G2(im1)
+            cycle1 = G1(fake2)
+            cycle2 = G2(fake1)
             cycle1_loss = l1(im1, cycle1)
             cycle2_loss = l1(im2, cycle2)
 
@@ -201,6 +201,8 @@ def train(D1, D2, G1, G2, loader, optD, optG, l1, mse, scalerD, scalerG):
         if idx % 200 == 0:
             save_image(fake1*0.5+0.5, f"saved_images/im1_{idx}.png")
             save_image(fake2*0.5+0.5, f"saved_images/im2_{idx}.png")
+            save_image(cycle1*0.5+0.5, f"saved_images/transfo/im1_{idx}.png")
+            save_image(cycle2*0.5+0.5, f"saved_images/transfo/im2_{idx}.png")
 
         loop.set_postfix(r1=real1/(idx+1), f1=fakes1/(idx+1))
 
