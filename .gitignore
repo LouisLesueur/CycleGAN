@@ -3,6 +3,12 @@
 data/
 saved_images/
 runs/
+checkpoints/
+
+
+*.pth.tar
+*.png
+*.jpg
 
 __pycache__/
 *.py[cod]
