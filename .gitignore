@@ -9,6 +9,7 @@ checkpoints/
 *.pth.tar
 *.png
 *.jpg
+*.db
 
 __pycache__/
 *.py[cod]
