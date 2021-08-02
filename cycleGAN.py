@@ -152,8 +152,8 @@ class CycleGAN:
                              transform = self.transform,
                              device = self.device)
 
-        loader1 = DataLoader(data1, batch_size = 1, shuffle = False)
-        loader2 = DataLoader(data2, batch_size = 1, shuffle = False)
+        loader1 = DataLoader(data1, args.batch_size, shuffle = False)
+        loader2 = DataLoader(data2, args.batch_size, shuffle = False)
 
         scalerG = torch.cuda.amp.GradScaler()
         scalerD = torch.cuda.amp.GradScaler()
@@ -233,6 +233,4 @@ class CycleGAN:
 
         self.epoch += 1
         print(f"[CycleGAN] Training: epoch {self.epoch} finished, train_style_loss: {train_style_loss/(len(data1)*len(data2))}, train cycle_loss: {train_cycle_loss/(len(data1)*len(data2))}")
-        self.writer.add_scalar("TotalLoss/Cycle", train_cycle_loss/(len(data1)*len(data2)), self.epoch)
-        self.writer.add_scalar("TotalLoss/Style", train_style_loss/(len(data1)*len(data2)), self.epoch)
         return train_style_loss/(len(data1)*len(data2))

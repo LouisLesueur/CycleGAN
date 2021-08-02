@@ -19,6 +19,13 @@ parser = argparse.ArgumentParser(description='Simple Neural Style Transfer Imple
 
 
 parser.add_argument(
+        '--batch_size',
+        type=int,
+        help='batch_size',
+        default=2
+        )
+
+parser.add_argument(
         '--weight_decay',
         type=float,
         help='weight_decay',
